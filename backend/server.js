@@ -8,4 +8,5 @@ app.use("/analyze", analyzeRoutes);
 
 app.listen(PORT, () => {
   console.log(`🚀 FitGenie running → http://localhost:${PORT}`);
+  
 });

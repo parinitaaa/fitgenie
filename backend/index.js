@@ -1,4 +1,4 @@
-// TRIAL using llava and not llave:7b since it seems to be more consistent with vision tasks. Will test both later and compare results.
+// TRIALjs using llava and not llave:7b since it seems to be more consistent with vision tasks. Will test both later and compare results.
 
 const express = require("express");
 const axios = require("axios");

@@ -31,4 +31,5 @@ exports.analyzeImage = (req, res) => {
 
   // Respond instantly
   res.json({ status: "analyzing" });
+  
 };

@@ -8,4 +8,5 @@ module.exports = async function analyzeImageJob(imagePath, cachePath) {
   const enriched = enrichMetadata(rawMetadata);
 
   fs.writeFileSync(cachePath, JSON.stringify(enriched, null, 2));
+  
 };

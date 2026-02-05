@@ -16,4 +16,5 @@ cmd: ollama --version    to check if it exists
 to run backend: cd backend
                 install the dependencies
                 node server.js
+                .
 

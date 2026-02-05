@@ -1,21 +1,29 @@
-import { useState } from 'react'
+// PR TEST LINE
+
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import AppLayout from './components/AppLayout'
+import BottomNav from './components/BottomNav'
+import Home from './pages/Home'
+import Upload from './pages/Upload'
+import Wardrobe from './pages/Wardrobe'
+import Profile from './pages/Profile'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <AppLayout>
-      <div>
-        <h1>Vite + React</h1>
-        <div className="card">
-          <button onClick={() => setCount((count) => count + 1)}>
-            count is {count}
-          </button>
+    <Router>
+      <AppLayout>
+        <div style={{ paddingBottom: '80px' }}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/upload" element={<Upload />} />
+            <Route path="/wardrobe" element={<Wardrobe />} />
+            <Route path="/profile" element={<Profile />} />
+          </Routes>
         </div>
-      </div>
-    </AppLayout>
+        <BottomNav />
+      </AppLayout>
+    </Router>
   )
 }
 

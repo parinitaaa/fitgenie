@@ -1,3 +1,3 @@
-export { default as Button } from './Button'
-export { default as Card } from './Card'
-export { default as Text } from './Text'
+export { default as Button } from './Button.jsx';
+export { default as Card } from './Card.jsx';
+export { default as Text } from './Text.jsx';

@@ -1,14 +1,23 @@
-import './Card.css'
+import { theme } from '../../styles/theme.js';
 
-function Card({ children, padding = true, className = '', ...props }) {
+const Card = ({ 
+  children, 
+  padding = '16px',
+  style = {},
+  ...props 
+}) => {
+  const cardStyles = {
+    backgroundColor: theme.surfaceColor,
+    borderRadius: '12px',
+    padding: padding,
+    ...style,
+  };
+
   return (
-    <div 
-      className={`card ${padding ? 'card-padded' : ''} ${className}`}
-      {...props}
-    >
+    <div style={cardStyles} {...props}>
       {children}
     </div>
-  )
-}
+  );
+};
 
-export default Card
+export default Card;

@@ -1,0 +1,26 @@
+{
+  "name": "fitgenie",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/parinitaaa/fitgenie.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/parinitaaa/fitgenie/issues"
+  },
+  "homepage": "https://github.com/parinitaaa/fitgenie#readme",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "multer": "^2.0.2",
+    "node-fetch": "^3.3.2"
+  }
+}

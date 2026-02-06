@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const faceRoutes = require("./routes/face.routes");
 const clothesRoutes = require("./routes/clothes.routes");

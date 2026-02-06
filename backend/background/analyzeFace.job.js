@@ -1,5 +1,5 @@
 const fs = require("fs");
-const visionService = require("../services/facevision.service");
+const visionService = require("../services/geminiface.service");
 const enrichMetadata = require("../utils/enrichMetadata");
 
 module.exports = async (imagePath, cachePath) =>{

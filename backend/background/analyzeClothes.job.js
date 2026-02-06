@@ -1,5 +1,5 @@
 const fs = require("fs");
-const visionService = require("../services/clothesVision.service");
+const visionService = require("../services/geminiclothes.service");
 
 module.exports = async (imagePath, cachePath) => {
   const data = await visionService.analyze(imagePath);

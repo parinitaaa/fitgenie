@@ -1,10 +1,13 @@
+require("dotenv").config();
 const express = require("express");
-const analyzeRoutes = require("./routes/analyze.routes");
+const faceRoutes = require("./routes/face.routes");
+const clothesRoutes = require("./routes/clothes.routes");
 
 const app = express();
 const PORT = 5000;
 
-app.use("/analyze", analyzeRoutes);
+app.use("/analyze/face", faceRoutes);
+app.use("/analyze/clothes", clothesRoutes);
 
 app.listen(PORT, () => {
   console.log(`🚀 FitGenie running → http://localhost:${PORT}`);

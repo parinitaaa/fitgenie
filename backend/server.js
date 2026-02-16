@@ -3,36 +3,54 @@ import multer from "multer";
 import fs from "fs";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
-
-
 dotenv.config();
+import dailyPipelineRoute from "./routes/dailyPipeline.route.js";
+import notificationRoute from "./routes/notification.route.js";
+
 
 const app = express();
 const upload = multer({ dest: "uploads/" });
 let lastClothingResult = null;
 let lastSkinResult = null;
 
-function tryMergeAndSave() {
-  if (lastClothingResult && lastSkinResult) {
-    const mergedData = {
-      ...lastClothingResult,
-      ...lastSkinResult
-    };
-    if (!fs.existsSync("data")) {
-  fs.mkdirSync("data");
-    }
-
-    fs.writeFileSync(
-      "data/user_analysis.json",
-      JSON.stringify(mergedData, null, 2)
-    );
-
-    console.log("Merged & saved:", mergedData);
-
-    // Optional: reset after save
-    lastClothingResult = null;
-    lastSkinResult = null;
+function ensureDataFolder() {
+  if (!fs.existsSync("data")) {
+    fs.mkdirSync("data");
   }
+}
+
+function saveUserProfile(skinData) {
+  ensureDataFolder();
+  fs.writeFileSync(
+    "data/user_profile.json",
+    JSON.stringify(skinData, null, 2)
+  );
+}
+
+function saveWardrobeItem(clothingData) {
+  ensureDataFolder();
+
+  let wardrobe = [];
+
+  if (fs.existsSync("data/wardrobe_database.json")) {
+    wardrobe = JSON.parse(
+      fs.readFileSync("data/wardrobe_database.json", "utf-8")
+    );
+  }
+
+  const newItem = {
+    id: `cloth_${String(wardrobe.length + 1).padStart(3, "0")}`,
+    ...clothingData
+  };
+
+  wardrobe.push(newItem);
+
+  fs.writeFileSync(
+    "data/wardrobe_database.json",
+    JSON.stringify(wardrobe, null, 2)
+  );
+
+  return newItem;
 }
 
 
@@ -79,7 +97,7 @@ Return only JSON.
                 { text: prompt },
                 {
                   inlineData: {
-                    mimeType: req.file.mimetype,
+                    mimeType: req.file.mimetype,//This tells Gemini what type of file you uploaded
                     data: base64Image
                   }
                 }
@@ -92,18 +110,28 @@ Return only JSON.
 
     const data = await response.json();
     console.log("FULL GEMINI RESPONSE:", JSON.stringify(data, null, 2));
-
-    if (!data.candidates || !data.candidates.length) {
+    //without null,2 {"name":"Alex","age":22}
+    if (!data.candidates || !data.candidates.length) { //Did Gemini actually send any answers?
+    // data
+    //└─ candidates[0]
+     // └─ content
+          // └─ parts[0]
+              //  └─ text
      return res.status(500).json({ error: "No candidates from Gemini", raw: data });
 }
     const text = data.candidates[0].content.parts[0].text;
     const jsonMatch = text.match(/\{[\s\S]*\}/);
+    //This uses regex to grab only:
+
+   //{ 
+   //"color": "maroon",
+   //"pattern": "solid"
+   //}
     const parsed = JSON.parse(jsonMatch[0]);
 
-    lastClothingResult = parsed;
-    tryMergeAndSave();
+    const savedItem = saveWardrobeItem(parsed);
 
-    fs.unlinkSync(req.file.path);
+    fs.unlinkSync(req.file.path);//Deletes uploaded image from:uploads
     res.json(parsed);
 
   } catch (err) {
@@ -120,7 +148,26 @@ app.post("/analyze-skin", upload.single("image"), async (req, res) => {
 
     const imageBuffer = fs.readFileSync(req.file.path);
     const base64Image = imageBuffer.toString("base64");
+   /*imageBuffer looks like:
 
+<Buffer ff d8 ff e0 00 10 4a 46 49 46 ...>
+
+(binary junk – computers understand this)
+
+Now:
+
+const base64Image = imageBuffer.toString("base64");
+
+It becomes a string like:
+
+/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEhUTEhIVFRUVFRUVFRUVFRUVFRUVFRUWFhUVFRUYHSggGBolGxUVITEhJSkrLi4uFx8zODMtNygtLisBCgoKDg0OFRAQFS0dFR0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLf/AABEIAKgBLAMBIgACEQEDEQH/xAAbAAACAwEBAQAAAAAAAAAAAAAEBQADBgIBB//EADsQAAIBAwIDBgQEBQUAAAAAAAECAwAEEQUSITFBBhMiUWEycYGRMkKhsRQjQlJywdHw8RUkYnL/xAAZAQEAAwEBAAAAAAAAAAAAAAAAAQIDBAX/xAAgEQEBAAICAgMBAAAAAAAAAAAAAQIDEQQSITEFEyJR/9oADAMBAAIRAxEAPwD9xooooAKKKKACiiigAooooAKKKKACiiigAooooA//Z
+
+Why base64?
+✔ can be sent in JSON
+✔ safe for APIs
+✔ Gemini understands it
+✔ no binary corruption
+*/
     const prompt = `
 Analyze the person's face in the image.
 
@@ -174,12 +221,15 @@ Return only JSON.
      .replace(/```json/g, "")
      .replace(/```/g, "")
      .trim();
+      //Gemini sometimes returns:
 
+          //```json
+          //{ "skinTone": "warm medium" }
     const parsed = JSON.parse(cleanText);
 
 
-    lastSkinResult = parsed;
-    tryMergeAndSave();
+    saveUserProfile(parsed);
+    console.log("User profile saved:", parsed);
 
     fs.unlinkSync(req.file.path);
 
@@ -192,7 +242,8 @@ Return only JSON.
   }
 });
 
-
+app.use("/run-daily", dailyPipelineRoute);
+app.use("/notifications", notificationRoute);
 
 app.listen(5005, () => {
   console.log("Server running on http://localhost:5005");

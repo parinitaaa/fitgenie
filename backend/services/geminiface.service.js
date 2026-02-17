@@ -1,7 +1,7 @@
 const axios = require("axios");
 const { imageToBase64 } = require("../helpers/geminiImage.helper");
 const { extractJSON } = require("../helpers/geminiJson.helper");
-console.log("GEMINI KEY:", process.env.GEMINI_API_KEY);
+//console.log("GEMINI KEY:", process.env.GEMINI_API_KEY);
 
 
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;

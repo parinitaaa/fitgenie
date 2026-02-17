@@ -1,31 +1,37 @@
 const weatherService = require("../services/weather.service");
+const {
+  getCachedWeather,
+  setCachedWeather,
+} = require("../utils/weatherCache");
 
 exports.getWeather = async (req, res) => {
   try {
-    const city = req.query.city || "Bangalore";
-    const data = await weatherService.getWeather(city);
+    const {city} = req.query;
+    if (!city) {
+      return res.status(400).json({ error: "City is required" });
+    }
 
+     // Check cache first
+    const cached = getCachedWeather(city.toLowerCase());
+    if (cached) {
+      return res.json({
+        source: "cache",
+        data: cached,
+      });
+    }
+
+     //  Fetch fresh data
+    const weather = await weatherService.getWeatherByCity(city);
+
+    //  Store in cache
+    setCachedWeather(city.toLowerCase(), weather);
     res.json({
-      location: {
-        name: data.location.name,
-        region: data.location.region,
-        country: data.location.country,
-        local_time: data.location.localtime
-      },
-      temperature: {
-        celsius: data.current.temp_c,
-        feels_like: data.current.feelslike_c
-      },
-      condition: data.current.condition.text,
-      humidity: data.current.humidity,
-      wind_kph: data.current.wind_kph,
-      air_quality: {
-        pm2_5: data.current.air_quality.pm2_5,
-        pm10: data.current.air_quality.pm10,
-        co: data.current.air_quality.co
-      }
+      source: "api",
+      data: weather,
     });
-  } catch (err) {
+
+  } catch (error) {
+    console.error(error.message);
     res.status(500).json({ error: "Failed to fetch weather data" });
   }
 };

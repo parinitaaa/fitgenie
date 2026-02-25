@@ -5,6 +5,13 @@ import fetch from "node-fetch";
 import dotenv from "dotenv";
 
 
+import "./scheduler.js";
+dotenv.config();
+import dailyPipelineRoute from "./routes/dailyPipeline.route.js";
+import notificationRoute from "./routes/notification.route.js";
+
+
+
 dotenv.config();
 
 const app = express();

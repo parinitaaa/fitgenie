@@ -1,0 +1,100 @@
+.analysis-display {
+  background-color: var(--surface-color);
+}
+
+.analysis-title {
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+.analysis-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.analysis-field {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.analysis-field:last-child {
+  border-bottom: none;
+}
+
+.field-label {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.field-value {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.analysis-array {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.array-item {
+  padding: 4px 12px;
+  background-color: rgba(143, 175, 159, 0.15);
+  border: 1px solid var(--accent-color);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.nested-object {
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 12px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nested-field {
+  display: flex;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.nested-label {
+  font-weight: 500;
+  min-width: 100px;
+}
+
+.nested-value {
+  word-break: break-word;
+}
+
+/* Type-specific styling */
+.analysis-clothing .analysis-title {
+  color: #8FAF9F;
+}
+
+.analysis-skin .analysis-title {
+  color: #D4A574;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .analysis-field {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .field-label {
+    font-weight: 600;
+  }
+}
